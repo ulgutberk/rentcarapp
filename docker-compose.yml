@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: rentcar_postgres
+    environment:
+      POSTGRES_DB: rentcar
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
