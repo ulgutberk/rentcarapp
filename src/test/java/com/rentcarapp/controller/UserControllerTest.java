@@ -34,16 +34,16 @@ class UserControllerTest {
 
     @Test
     void registerUser_ShouldReturnCreatedWhenSuccess() throws Exception {
-        // given
+        
         User user = new User();
         user.setUsername("BERK");
         user.setPassword("1234");
         user.setEmail("ulgutberk@gmail.com");
 
-        // Service saveUser döndürmesi
+        
         given(userService.saveUser(any(User.class))).willReturn(user);
 
-        // when & then
+        
         mockMvc.perform(
                         post("/api/users/register")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +57,7 @@ class UserControllerTest {
 
     @Test
     void getUser_ShouldReturnOkWhenUserFound() throws Exception {
-        // given
+        
         User user = new User();
         user.setUsername("BERK");
         user.setPassword("1234");
@@ -65,7 +65,7 @@ class UserControllerTest {
 
         when(userService.getUserByUsername("BERK")).thenReturn(Optional.of(user));
 
-        // when & then
+        
         mockMvc.perform(get("http://localhost:8080/api/users/getByName?username=BERK"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("BERK"))
