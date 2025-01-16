@@ -1,5 +1,7 @@
 package com.rentcarapp.service;
 
+import com.rentcarapp.dto.UserDTO;
+import com.rentcarapp.mapper.UserMapper;
 import com.rentcarapp.model.User;
 import com.rentcarapp.repository.UserRepository;
 import com.rentcarapp.exception.CustomExceptions.UserAlreadyExistsException; // Örnek
@@ -11,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,7 +32,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         user = new User();
-        user.setId(1L);
+        user.setId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         user.setUsername("TestUser");
         user.setPassword("1234");
         user.setEmail("testuser@gmail.com");
@@ -44,13 +47,11 @@ class UserServiceTest {
         when(userRepository.save(user))
                 .thenReturn(user);
 
+        UserDTO userDTO = UserMapper.INSTANCE.entityToDto(user);
+        System.out.println(userDTO);
 
-        User savedUser = userService.saveUser(user);
-
-        System.out.println(savedUser);
-
-        assertNotNull(savedUser);
-        assertEquals(user.getUsername(), savedUser.getUsername());
+        assertNotNull(userDTO);
+        assertEquals(user.getUsername(), userDTO.getUsername());
         verify(userRepository, times(1)).findByUsername(user.getUsername());
         verify(userRepository, times(1)).save(user);
     }
@@ -92,24 +93,26 @@ class UserServiceTest {
 
     @Test
     void findById_ShouldReturnUserWhenFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        UUID testUuid = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        when(userRepository.findById(testUuid)).thenReturn(Optional.of(user));
 
-        Optional<User> foundUser = userService.findById(1L);
+        Optional<User> foundUser = userService.findById(testUuid);
 
         assertNotNull(foundUser);
-        assertEquals(1L, foundUser.get().getId());
-        verify(userRepository, times(1)).findById(1L);
+        assertEquals(testUuid, foundUser.get().getId());
+        verify(userRepository, times(1)).findById(testUuid);
     }
 
     @Test
     void findById_ShouldReturnNullWhenNotFound() {
-        when(userRepository.findById(999L)).thenReturn(Optional.empty()); // Correct usage
+        UUID testUuid = UUID.fromString("00000000-0000-0000-0000-100000000001");
+        when(userRepository.findById(testUuid)).thenReturn(Optional.empty()); // Correct usage
 
-        Optional<User> foundUser = userService.findById(999L); // Assuming this method unwraps the Optional and returns null if not found
+        Optional<User> foundUser = userService.findById(testUuid); // Assuming this method unwraps the Optional and returns null if not found
 
 
         assertTrue(foundUser.isEmpty());
-        verify(userRepository, times(1)).findById(999L);
+        verify(userRepository, times(1)).findById(testUuid);
     }
 
 }

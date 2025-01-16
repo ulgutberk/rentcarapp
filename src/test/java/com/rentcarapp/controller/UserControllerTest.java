@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentcarapp.model.User;
 import com.rentcarapp.service.UserService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import static org.mockito.BDDMockito.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -51,7 +51,6 @@ class UserControllerTest {
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.username").value("BERK"))
-                .andExpect(jsonPath("$.password").value("1234"))
                 .andExpect(jsonPath("$.email").value("ulgutberk@gmail.com"));
     }
 
@@ -86,31 +85,33 @@ class UserControllerTest {
     @Test
     void getUserById_ShouldReturnUserWhenFound() throws Exception {
         User user = new User();
-        user.setId(10L);
+        UUID testUuid = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        user.setId(testUuid);
         user.setUsername("john");
         user.setPassword("pass123");
 
-        when(userService.findById(10L)).thenReturn(Optional.of(user));
+        when(userService.findById(testUuid)).thenReturn(Optional.empty());
 
         mockMvc.perform(
                         post("/api/users/getById")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"id\":10}")
+                                .content("{\"id\":\"" + testUuid + "\"}")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(10))
+                .andExpect(jsonPath("$.id").value(testUuid))
                 .andExpect(jsonPath("$.username").value("john"))
                 .andExpect(jsonPath("$.password").value("pass123"));
     }
 
     @Test
     void getUserById_ShouldReturnNotFoundWhenNull() throws Exception {
-        when(userService.findById(999L)).thenReturn(Optional.empty());
+        UUID testUuid = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        when(userService.findById(testUuid)).thenReturn(Optional.empty());
 
         mockMvc.perform(
                         post("/api/users/getById")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"id\":999}")
+                                .content("{\"id\":\"" + testUuid + "\"}")
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("User not found"));

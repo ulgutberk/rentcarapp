@@ -1,5 +1,7 @@
 package com.rentcarapp.controller;
 
+import com.rentcarapp.dto.UserDTO;
+import com.rentcarapp.mapper.UserMapper;
 import com.rentcarapp.model.User;
 import com.rentcarapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,9 +27,10 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
+    public ResponseEntity<UserDTO> registerUser(@RequestBody User user) {
         User savedUser = userService.saveUser(user);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        UserDTO userDTO = UserMapper.INSTANCE.entityToDto(savedUser);
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/getByName")
@@ -40,9 +44,10 @@ public class UserController {
     }
 
     @PostMapping("/getById")
-    public ResponseEntity<?> getUserById(@RequestBody Map<String, Long> body) {
-        Long id = body.get("id");
-        Optional<User> user  = userService.findById(id);
+    public ResponseEntity<?> getUserById(@RequestBody Map<String, String> body) {
+        String idValue  = body.get("id");
+        UUID userId = UUID.fromString(idValue);
+        Optional<User> user  = userService.findById(userId);
         if(user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
