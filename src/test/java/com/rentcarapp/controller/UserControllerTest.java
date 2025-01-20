@@ -2,9 +2,12 @@ package com.rentcarapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rentcarapp.model.User;
+import com.rentcarapp.projection.UserProjection;
+import com.rentcarapp.projection.UserProjectionWithPassword;
 import com.rentcarapp.service.UserService;
 import org.junit.jupiter.api.Test;
 import static org.mockito.BDDMockito.*;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -56,13 +59,26 @@ class UserControllerTest {
 
     @Test
     void getUser_ShouldReturnOkWhenUserFound() throws Exception {
-        
-        User user = new User();
-        user.setUsername("BERK");
-        user.setPassword("1234");
-        user.setEmail("ulgutberk@gmail.com");
+        UserProjectionWithPassword userProjectionWithPassword = new UserProjectionWithPassword() {
+            @Override
+            public String getUsername() {
+                return "BERK";
+            }
+            @Override
+            public String getEmail() {
+                return "ulgutberk@gmail.com";
+            }
+            @Override
+            public String getId() {
+                return "00000000-0000-0000-0000-000000000001";
+            }
+            @Override
+            public String getPassword() {
+                return "1234";
+            }
+        };
 
-        when(userService.getUserByUsername("BERK")).thenReturn(Optional.of(user));
+        when(userService.getUserByUsername("BERK")).thenReturn(Optional.of(userProjectionWithPassword));
 
         
         mockMvc.perform(get("http://localhost:8080/api/users/getByName?username=BERK"))
@@ -84,13 +100,27 @@ class UserControllerTest {
 
     @Test
     void getUserById_ShouldReturnUserWhenFound() throws Exception {
+        UserProjection userProjection = new UserProjection() {
+            @Override
+            public String getUsername() {
+                return "john";
+            }
+            @Override
+            public String getEmail() {
+                return "ulgutberk@gmail.com";
+            }
+            @Override
+            public String getId() {
+                return "00000000-0000-0000-0000-000000000001";
+            }
+        };
+
         User user = new User();
         UUID testUuid = UUID.fromString("00000000-0000-0000-0000-000000000001");
         user.setId(testUuid);
         user.setUsername("john");
-        user.setPassword("pass123");
 
-        when(userService.findById(testUuid)).thenReturn(Optional.empty());
+        when(userService.findById(testUuid)).thenReturn(Optional.of(userProjection));
 
         mockMvc.perform(
                         post("/api/users/getById")
@@ -98,9 +128,8 @@ class UserControllerTest {
                                 .content("{\"id\":\"" + testUuid + "\"}")
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testUuid))
-                .andExpect(jsonPath("$.username").value("john"))
-                .andExpect(jsonPath("$.password").value("pass123"));
+                .andExpect(jsonPath("$.id").value(testUuid.toString()))
+                .andExpect(jsonPath("$.username").value("john"));
     }
 
     @Test

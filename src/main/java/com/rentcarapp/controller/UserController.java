@@ -3,6 +3,7 @@ package com.rentcarapp.controller;
 import com.rentcarapp.dto.UserDTO;
 import com.rentcarapp.mapper.UserMapper;
 import com.rentcarapp.model.User;
+import com.rentcarapp.projection.UserProjection;
 import com.rentcarapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class UserController {
 
     @GetMapping("/getByName")
     public ResponseEntity<?> getUser(@RequestParam String username)  {
-        Optional<User> user = userService.getUserByUsername(username);
+        Optional<UserProjection> user = userService.getUserByUsername(username);
 
         if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -47,7 +48,7 @@ public class UserController {
     public ResponseEntity<?> getUserById(@RequestBody Map<String, String> body) {
         String idValue  = body.get("id");
         UUID userId = UUID.fromString(idValue);
-        Optional<User> user  = userService.findById(userId);
+        Optional<UserProjection> user  = userService.findById(userId);
         if(user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
