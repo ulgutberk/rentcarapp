@@ -10,6 +10,8 @@ public interface IUserService {
 
     User saveUser(User user);
 
+    Optional<UserProjection> deleteUser(String idValue);
+
     Optional<UserProjection> getUserByUsername(String username);
 
     Optional<UserProjection> findById(UUID id);
