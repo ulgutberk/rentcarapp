@@ -18,4 +18,16 @@ public class CustomExceptions {
         }
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static class MissingParameterException extends RuntimeException {
+        public MissingParameterException(String message) {super(message);
+        }
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static class WrongUUIDFormatException extends RuntimeException {
+        public WrongUUIDFormatException(String message) {super(message);
+        }
+    }
+
 }

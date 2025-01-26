@@ -1,6 +1,6 @@
 package com.rentcarapp.repository;
 
-import com.rentcarapp.model.User;
+import com.rentcarapp.model.entity.User;
 import com.rentcarapp.projection.UserProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 
