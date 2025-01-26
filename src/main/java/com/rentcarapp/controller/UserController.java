@@ -100,6 +100,7 @@ public class UserController {
         }
     }
 
+
     @PostMapping("/getUserById")
     public ResponseEntity<ApiResponse<UserProjection>> getUserById(@RequestBody Map<String, String> body) {
 
