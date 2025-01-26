@@ -1,4 +1,4 @@
-package com.rentcarapp.model;
+package com.rentcarapp.model.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
-// Model kisminda Table da hangi degiskenler olacak onu belirtiyoruz.
+
 @Entity
 @Data
 @AllArgsConstructor

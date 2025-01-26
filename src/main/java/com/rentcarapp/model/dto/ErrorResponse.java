@@ -1,4 +1,4 @@
-package com.rentcarapp.dto;
+package com.rentcarapp.model.dto;
 
 import lombok.Data;
 

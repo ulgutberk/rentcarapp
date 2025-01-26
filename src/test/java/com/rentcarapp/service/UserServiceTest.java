@@ -1,6 +1,7 @@
 package com.rentcarapp.service;
 
-import com.rentcarapp.model.User;
+import com.rentcarapp.model.dto.UserDTO;
+import com.rentcarapp.model.entity.User;
 import com.rentcarapp.projection.UserProjection;
 import com.rentcarapp.repository.UserRepository;
 import com.rentcarapp.exception.CustomExceptions.UserAlreadyExistsException; // Örnek
@@ -46,11 +47,11 @@ class UserServiceTest {
         when(userRepository.save(user))
                 .thenReturn(user);
 
-        User userSaved = userService.saveUser(user);
+        Optional<UserDTO> userSaved = userService.saveUser(user);
         System.out.println(userSaved);
 
         assertNotNull(userSaved);
-        assertEquals(user.getUsername(), userSaved.getUsername());
+        assertEquals(user.getUsername(), userSaved.get().getUsername());
         verify(userRepository, times(1)).findByUsername(user.getUsername());
         verify(userRepository, times(1)).save(user);
     }
@@ -65,10 +66,6 @@ class UserServiceTest {
             @Override
             public String getUsername() {
                 return user.getUsername();
-            }
-            @Override
-            public String getEmail() {
-                return user.getEmail();
             }
         };
 
@@ -92,10 +89,7 @@ class UserServiceTest {
             public String getUsername() {
                 return user.getUsername();
             }
-            @Override
-            public String getEmail() {
-                return user.getEmail();
-            }
+
         };
 
         when(userRepository.findByUsername(user.getUsername()))
@@ -129,10 +123,7 @@ class UserServiceTest {
             public String getUsername() {
                 return user.getUsername();
             }
-            @Override
-            public String getEmail() {
-                return user.getEmail();
-            }
+
         };
 
         UUID testUuid = UUID.fromString("00000000-0000-0000-0000-000000000001");
